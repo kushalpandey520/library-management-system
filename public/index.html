@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Reading Room &mdash; Library Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-mark">R</div>
+            <div class="logo-text">
+                <h2>The Reading Room</h2>
+                <small>Library Manager</small>
+            </div>
+        </div>
+        <div class="sidebar-divider"></div>
+        <ul class="sidebar-menu">
+            <li class="menu-label">Overview</li>
+            <li class="active" data-page="dashboard">
+                <a href="#"><i class="fas fa-columns"></i><span>Dashboard</span></a>
+            </li>
+            <li class="menu-label">Catalog</li>
+            <li data-page="books">
+                <a href="#"><i class="fas fa-book"></i><span>Books</span></a>
+            </li>
+            <li data-page="members">
+                <a href="#"><i class="fas fa-user-friends"></i><span>Members</span></a>
+            </li>
+            <li class="menu-label">Circulation</li>
+            <li data-page="issue">
+                <a href="#"><i class="fas fa-sign-out-alt"></i><span>Check Out</span></a>
+            </li>
+            <li data-page="returns">
+                <a href="#"><i class="fas fa-sign-in-alt"></i><span>Check In</span></a>
+            </li>
+            <li data-page="history">
+                <a href="#"><i class="fas fa-scroll"></i><span>Ledger</span></a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <small>&copy; 2026 The Reading Room</small>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="topbar-left">
+                <h1 id="pageTitle">Dashboard</h1>
+                <p class="topbar-subtitle" id="pageSubtitle">Here's what's happening at the library today.</p>
+            </div>
+            <div class="topbar-right">
+                <span class="date-display" id="dateDisplay"></span>
+            </div>
+        </header>
+
+        <!-- Dashboard Page -->
+        <section class="page active" id="page-dashboard">
+            <div class="greeting" id="greeting">Good morning!</div>
+
+            <div class="stats-grid">
+                <div class="stat-card stat-books">
+                    <p class="stat-label">Books in catalog</p>
+                    <h3 id="statTotalBooks">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+                <div class="stat-card stat-copies">
+                    <p class="stat-label">Total copies</p>
+                    <h3 id="statTotalCopies">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+                <div class="stat-card stat-available">
+                    <p class="stat-label">On the shelves</p>
+                    <h3 id="statAvailable">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+                <div class="stat-card stat-members">
+                    <p class="stat-label">Active members</p>
+                    <h3 id="statMembers">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+                <div class="stat-card stat-issued">
+                    <p class="stat-label">Checked out</p>
+                    <h3 id="statIssued">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+                <div class="stat-card stat-overdue">
+                    <p class="stat-label">Overdue</p>
+                    <h3 id="statOverdue">0</h3>
+                    <div class="stat-accent"></div>
+                </div>
+            </div>
+
+            <div class="dashboard-sections">
+                <div class="section-card">
+                    <div class="section-card-header">
+                        <h3>Latest activity</h3>
+                        <a href="#" class="subtle-link" onclick="navigateTo('history'); return false;">View all &rarr;</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Book</th>
+                                    <th>Member</th>
+                                    <th>Issued</th>
+                                    <th>Due back</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentTransactions"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Books Page -->
+        <section class="page" id="page-books">
+            <div class="page-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="bookSearch" placeholder="Find a book by title, author, or ISBN...">
+                </div>
+                <button class="btn btn-primary" onclick="openBookModal()">
+                    <i class="fas fa-plus"></i> New book
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>ISBN</th>
+                            <th>Genre</th>
+                            <th>Copies</th>
+                            <th>Availability</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="booksTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Members Page -->
+        <section class="page" id="page-members">
+            <div class="page-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="memberSearch" placeholder="Find a member by name or email...">
+                </div>
+                <button class="btn btn-primary" onclick="openMemberModal()">
+                    <i class="fas fa-plus"></i> New member
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Member since</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="membersTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Issue Book Page -->
+        <section class="page" id="page-issue">
+            <div class="form-card">
+                <div class="form-card-header">
+                    <h3>Check out a book</h3>
+                    <p>Select a book and member below. The default loan period is 14 days &mdash; adjust the due date if needed.</p>
+                </div>
+                <form id="issueForm">
+                    <div class="form-group">
+                        <label for="issueBook">Which book?</label>
+                        <select id="issueBook" required>
+                            <option value="">Pick a book...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="issueMember">For which member?</label>
+                        <select id="issueMember" required>
+                            <option value="">Pick a member...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="issueDueDate">Return by</label>
+                        <input type="date" id="issueDueDate" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Confirm check out
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Returns Page -->
+        <section class="page" id="page-returns">
+            <div class="page-intro">
+                <h3>Check in returns</h3>
+                <p>Books currently on loan are listed below. Hit "Return" to check one back in. Overdue fines are calculated automatically at $1 per day.</p>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Borrower</th>
+                            <th>Issued</th>
+                            <th>Due back</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="returnsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- History Page -->
+        <section class="page" id="page-history">
+            <div class="page-intro">
+                <h3>Transaction ledger</h3>
+                <p>A complete record of every check-out and return.</p>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>Member</th>
+                            <th>Issued</th>
+                            <th>Due</th>
+                            <th>Returned</th>
+                            <th>Fine</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Book Modal -->
+    <div class="modal-overlay" id="bookModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="bookModalTitle">Add a new book</h3>
+                <button class="modal-close" onclick="closeBookModal()" aria-label="Close">&times;</button>
+            </div>
+            <form id="bookForm">
+                <input type="hidden" id="bookId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookTitle">Title</label>
+                        <input type="text" id="bookTitle" placeholder="e.g. The Great Gatsby" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookAuthor">Author</label>
+                        <input type="text" id="bookAuthor" placeholder="e.g. F. Scott Fitzgerald" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookIsbn">ISBN</label>
+                        <input type="text" id="bookIsbn" placeholder="e.g. 978-0743273565" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookPublisher">Publisher</label>
+                        <input type="text" id="bookPublisher" placeholder="Optional">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookYear">Year</label>
+                        <input type="number" id="bookYear" min="1000" max="2099" placeholder="e.g. 1925">
+                    </div>
+                    <div class="form-group">
+                        <label for="bookGenre">Genre</label>
+                        <input type="text" id="bookGenre" placeholder="e.g. Fiction">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="bookCopies">How many copies?</label>
+                    <input type="number" id="bookCopies" min="1" value="1" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeBookModal()">Never mind</button>
+                    <button type="submit" class="btn btn-primary">Save book</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Member Modal -->
+    <div class="modal-overlay" id="memberModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="memberModalTitle">Register a member</h3>
+                <button class="modal-close" onclick="closeMemberModal()" aria-label="Close">&times;</button>
+            </div>
+            <form id="memberForm">
+                <input type="hidden" id="memberId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="memberName">Full name</label>
+                        <input type="text" id="memberName" placeholder="e.g. Ada Lovelace" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="memberEmail">Email</label>
+                        <input type="email" id="memberEmail" placeholder="e.g. ada@example.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="memberPhone">Phone</label>
+                        <input type="text" id="memberPhone" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label for="memberStatus">Status</label>
+                        <select id="memberStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="memberAddress">Address</label>
+                    <textarea id="memberAddress" rows="2" placeholder="Optional"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeMemberModal()">Never mind</button>
+                    <button type="submit" class="btn btn-primary">Save member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
